@@ -4,6 +4,7 @@ namespace MCS;
 use DateTime;
 use Exception;
 use DOMDocument;
+use DOMNode;
 use DateTimeZone;
 use MCS\BolPlazaOrderItem;
 use MCS\BolPlazaOrderAddress;
@@ -75,32 +76,15 @@ class BolPlazaOrder{
         foreach ($this->OrderItems as $OrderItem) {
             $xml = new DOMDocument('1.0', 'UTF-8');
 
-            $body = $xml->appendChild(
-                $xml->createElementNS('https://plazaapi.bol.com/services/xsd/v2/plazaapi.xsd', 'ShipmentRequest')
-            );
-            $body->appendChild(
-                $xml->createElement('OrderItemId', $OrderItem->OrderItemId)
-            );
-            $body->appendChild(
-                $xml->createElement('ShipmentReference', $OrderItem->Title)
-            );
-            $body->appendChild(
-                $xml->createElement('DateTime', $now->format($format))
-            );
-            $body->appendChild(
-                $xml->createElement('ExpectedDeliveryDate', $expected->format(DATE_ISO8601))
-            );
-            
+            self::appendElement( $xml, $body, 'OrderItemId', $OrderItem->OrderItemId );
+            self::appendElement( $xml, $body, 'ShipmentReference', $OrderItem->Title );
+            self::appendElement( $xml, $body, 'DateTime', $now->format($format) );
+            self::appendElement( $xml, $body, 'ExpectedDeliveryDate', $expected->format(DATE_ISO8601) );
+
             if ($carrier && $awb) {
-                $transport = $body->appendChild(
-                    $xml->createElement('Transport')
-                );
-                $transport->appendChild(
-                    $xml->createElement('TransporterCode', $carrier)
-                );
-                $transport->appendChild(
-                    $xml->createElement('TrackAndTrace', $awb)
-                ); 
+                $transport = self::appendElement( $xml, $body, 'Transport' );
+                self::appendElement( $xml, $transport, 'TransporterCode', $carrier );
+                self::appendElement( $xml, $transport, 'TrackAndTrace', $awb );
             }
             
             $response[] = $this->client->request($this->client->endPoints['shipments'], 'POST', $xml->saveXML());
@@ -108,5 +92,30 @@ class BolPlazaOrder{
         
         return $response;
         
+    }
+
+
+    /**
+     * Create an element with specified contents, and add it to $xml under $parent.
+     * @param  object DOMDocument $xml
+     * @param  object DOMElement $parent
+     * @param  string $nodename
+     * @param  string $contents
+     * @param  string $namespace
+     * @return object DOMElement The element just created
+     */
+    protected static function appendElement( DOMDocument $xml, DOMNode $parent, $nodename, $contents = "", $namespace = "" )
+    {
+        $rv = null;
+        if ( !empty($namespace) )
+            $rv = $xml->createElementNS( $namespace, $nodename );
+        else
+            $rv = $xml->createElement( $nodename );
+
+        if ( !empty($contents) )
+            $rv->appendChild( $xml->createTextNode($contents) );
+
+        $parent->appendChild( $rv );
+        return $rv;
     }
 }
