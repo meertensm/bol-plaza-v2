@@ -11,6 +11,7 @@ class BolPlazaOrder{
 
     private $client;
     public $id;
+    public $date;
     public $ShippingAddress;
     public $BillingAddress;
     public $OrderItems = [];
