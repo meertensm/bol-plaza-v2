@@ -3,6 +3,7 @@ namespace MCS;
  
 class BolPlazaOrderAddress{
 
+    public $SalutationCode;
     public $Firstname;
     public $Surname;
     public $Streetname;
