@@ -442,6 +442,7 @@ class BolPlazaClient{
              
                 $tmp = new BolPlazaOrder(
                     $order['OrderId'],
+                    $order['DateTimeCustomer'],
                     $order['CustomerDetails']['ShipmentDetails'],
                     $order['CustomerDetails']['BillingDetails'],
                     $this
