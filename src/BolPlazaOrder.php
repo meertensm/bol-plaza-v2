@@ -54,7 +54,7 @@ class BolPlazaOrder{
         $carriers = [
             'BPOST_BRIEF', 'BRIEFPOST', 'GLS', 'FEDEX_NL',
             'DHLFORYOU', 'UPS', 'KIALA_BE', 'KIALA_NL',
-            'DYL', 'DPD_NL', 'DPD_BE', 'BPOST_BE',
+            'DYL', 'DPD-NL', 'DPD-BE', 'BPOST_BE',
             'FEDEX_BE', 'OTHER', 'DHL', 'SLV',
             'TNT', 'TNT_EXTRA', 'TNT_BRIEF',
             'TRANSMISSION'
