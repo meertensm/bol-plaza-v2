@@ -48,13 +48,13 @@ class BolPlazaOrder{
      * @param  parcelnumber [$awb = false]                 
      * @return array
      */
-    public function ship(DateTime $expectedDeliveryDate, $carrier = false, $awb = false)
+    public function ship(DateTime $expectedDeliveryDate, $carrier = false, $awb = false, $label = false)
     {
      
         $carriers = [
             'BPOST_BRIEF', 'BRIEFPOST', 'GLS', 'FEDEX_NL',
             'DHLFORYOU', 'UPS', 'KIALA_BE', 'KIALA_NL',
-            'DYL', 'DPD_NL', 'DPD_BE', 'BPOST_BE',
+            'DYL', 'DPD-NL', 'DPD-BE', 'BPOST_BE',
             'FEDEX_BE', 'OTHER', 'DHL', 'SLV',
             'TNT', 'TNT_EXTRA', 'TNT_BRIEF',
             'TRANSMISSION'
@@ -88,7 +88,12 @@ class BolPlazaOrder{
             $body->appendChild(
                 $xml->createElement('ExpectedDeliveryDate', $expectedDeliveryDate->format($format))
             );
-            
+            if ($label) {
+                $body->appendChild(
+                    $xml->createElement('ShippingLabelCode', $label)
+                );
+            };
+    
             if ($carrier) {
                 $transport = $body->appendChild(
                     $xml->createElement('Transport')
