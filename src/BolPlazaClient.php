@@ -33,11 +33,11 @@ class BolPlazaClient{
         'shipping-labels' => '/services/rest/purchasable-shipping-labels/v2?orderItemId=:id',     
 
         'payments' => '/services/rest/payments/v2/:month',
-        'offers-export' => '/offers/v1/export',
-        'offer-stock' => '/offers/v1/:id/stock',
-        'offer-update' => '/offers/v1/:id',
-        'offer-delete' => '/offers/v1/:id',
-        'offer-create' => '/offers/v1/:id'
+        'offers-export' => '/offers/v2/export',
+        'offer-stock' => '/offers/v2/:id/stock',
+        'offer-update' => '/offers/v2/:id',
+        'offer-delete' => '/offers/v2/:id',
+        'offer-create' => '/offers/v2/:id'
     ];
     
     public $deliveryCodes = [
