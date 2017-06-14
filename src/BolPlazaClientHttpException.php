@@ -1,16 +1,16 @@
-<?php 
+<?php
 namespace MCS;
- 
+
 use Exception;
 
 class BolPlazaClientHttpException extends Exception
 {
     protected $errorCode;
-    
+
     public function __construct($errorCode, $code = 0, Exception $previous = null) {
-        
+
         $this->errorCode = $errorCode;
-        
+
         $messages = [
             '41101' => 'The provided public key is unknown, blocked, blacklisted or for a different environment (test-app or live, which is based on the URL www.test-plazaapi.bol.com or www.plazaapi.bol.com).',
             '41102' => 'One of the mandatory request headers is missing or date header is not between +/- 15 minutes of the server time in GMT.',
@@ -32,7 +32,7 @@ class BolPlazaClientHttpException extends Exception
             '41301' => 'Offer file ‘%s’ does not exist (anymore)',
             '41302' => 'Invalid filter used: %s. Valid filters are %s'
         ];
-                
+
         $http_codes = [
             100 => 'Continue',
             101 => 'Switching Protocols',
@@ -90,11 +90,11 @@ class BolPlazaClientHttpException extends Exception
             509 => 'Bandwidth Limit Exceeded',
             510 => 'Not Extended'
         ];
-    
+
         $errorCode = (string) $errorCode;
         if (isset($messages[$errorCode])) {
             $errorCode = $messages[$errorCode];
-        } else if (isset($http_codes[$errorCode])) {
+        } elseif (isset($http_codes[$errorCode])) {
             $errorCode = $http_codes[$errorCode];
         }
         parent::__construct($errorCode, $code, $previous);
@@ -103,9 +103,9 @@ class BolPlazaClientHttpException extends Exception
     public function __toString() {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
-    
+
     public function getErrorCode()
     {
-        return $this->errorCode;    
+        return $this->errorCode;
     }
 }
