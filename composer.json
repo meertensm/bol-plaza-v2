@@ -1,5 +1,5 @@
 {
-    "name": "mcs/bol-plaza-v2",
+    "name": "ecomlogic/bol-sdk",
     "description": "Interact with the Bol.com Plaza API",
     "license": "MIT",
     "keywords": ["Bol.com", "Bol.com api", "Plaza api", "Bol.com Plaza Api"],
