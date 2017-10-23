@@ -161,6 +161,10 @@ class BolPlazaClient
             ]
         ];
 
+        if (preg_replace('/\?.*/', '', $endPoint) == $this->endPoints['orders']) {
+            $config[CURLOPT_HTTPHEADER][] = 'Accept: application/vnd.orders-v2.1+xml';
+        }
+
         if ($httpMethod !== 'GET' && !is_null($body)) {
             $config[CURLOPT_POSTFIELDS] = $body;
         }
@@ -648,10 +652,10 @@ class BolPlazaClient
      * Get all orders
      * @return mixed of BolPlazaOrder objects / false if no orders are found
      */
-    public function getOrders()
+    public function getOrders($page)
     {
 
-        $result = $this->request($this->endPoints['orders'], 'GET');
+        $result = $this->request($this->endPoints['orders'] . '?page=' . $page, 'GET');
 
         if (!isset($result['Order'])) {
             return false;
