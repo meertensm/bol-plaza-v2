@@ -31,7 +31,7 @@ class BolPlazaClient{
         'shipping-status' => '/services/rest/process-status/v2/:id',
         'shipping-label' => '/services/rest/transports/v2/:transportId/shipping-label/:labelId', 
         'shipping-labels' => '/services/rest/purchasable-shipping-labels/v2?orderItemId=:id',     
-
+        'invoices_list' => '/services/rest/invoices',
         'payments' => '/services/rest/payments/v2/:month',
         'offers-export' => '/offers/v1/export',
         'offer-stock' => '/offers/v1/:id/stock',
@@ -641,5 +641,30 @@ class BolPlazaClient{
         $minutesAndSeconds = explode(':', $deliveryTime);
         
         return $nextDay->setTime($minutesAndSeconds[0], $minutesAndSeconds[1]);
+    }
+    
+    public function getInvoicesList(DateTime $from = null, DateTime $to = null)
+    {
+        $url = $this->endPoints['invoices_list'];
+        
+        $date_format = 'Y-m-d';
+        
+        if (!is_null($from)) {
+            $url .= '?period=' . $from->format($date_format) . '/' . $to->format($date_format);
+        }
+     
+        return $this->request($url, 'GET');
+    }
+
+    public function getInvoice($id)
+    {
+        return $this->request($this->endPoints['invoices_list'] . '/' . $id, 'GET');
+    }
+    
+    public function getInvoiceSpecification($id, $page = 1)
+    {
+        return $this->request(
+            '/services/rest/invoices/' . $id . '/specification?page=' . $page, 'GET'
+        );
     }
 }
