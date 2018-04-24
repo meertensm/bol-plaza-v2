@@ -37,7 +37,11 @@ class BolPlazaClient{
         'offer-stock' => '/offers/v1/:id/stock',
         'offer-update' => '/offers/v1/:id',
         'offer-delete' => '/offers/v1/:id',
-        'offer-create' => '/offers/v1/:id'
+        'offer-create' => '/offers/v1/:id',
+        
+        'offers-export-v2' => '/offers/v2/export',
+        'get-single-offer' => '/offers/v2/',
+        'upsert-offer' => '/offers/v2/',
     ];
     
     public $deliveryCodes = [
@@ -237,6 +241,97 @@ class BolPlazaClient{
      */
     private function is_assoc(array $array) {
       return (bool) count(array_filter(array_keys($array), 'is_string'));
+    }
+    
+    public function requestOfferFileV2()
+    {
+        $result = $this->request($this->endPoints['offers-export-v2'], 'GET'); 
+        
+        if (isset($result['Url'])) {
+            $file = explode('/', $result['Url']);
+            return end($file);
+        }
+    
+        return false;
+    }
+    
+    public function getSingleOffer($ean, $condition = 'NEW')
+    {
+        $result = $this->request(
+            $this->endPoints['get-single-offer'] . $ean . '?condition=' . $condition, 'GET'
+        );
+        
+        if (isset($result['RetailerOffers']['RetailerOffer']['EAN'])) {
+            return new \MCS\BolPlazaOffer($result['RetailerOffers']['RetailerOffer'], true);    
+        }
+        
+        return $result;
+    }
+    
+    public function upsertOffer($offers)
+    {
+        if (!is_array($offers)) {
+            $offers = [$offers];    
+        }
+        
+        if (count($offers) > 50) {
+            throw new \MCS\BolPlazaOfferException('Maximum of 50 upserts are allowed');    
+        }
+     
+        $xml = new DOMDocument('1.0', 'UTF-8');
+
+        $body = $xml->appendChild(
+            $xml->createElementNS('https://plazaapi.bol.com/offers/xsd/api-2.0.xsd', 'UpsertRequest')
+        );
+        
+        $fields = [
+            'EAN', 'Condition', 'Price', 'DeliveryCode', 'QuantityInStock',
+            'Publish', 'ReferenceCode', 'Description', 'Title', 'FulfillmentMethod'
+        ];
+       
+        foreach ($offers as $offer) {
+            $offer_body = $body->appendChild(
+                $xml->createElement('RetailerOffer')
+            );    
+            
+            foreach ($fields as $field) {
+                $offer_body->appendChild(
+                    $xml->createElement($field, $offer->{$field})
+                );        
+            }
+        }
+        
+        $result = $this->request(
+            $this->endPoints['upsert-offer'], 'PUT', $xml->saveXML()
+        );
+        
+        return true;
+    }
+    
+    public function getOffersV2($fileName)
+    {
+        
+        try {    
+            
+            $csv = $this->request($this->endPoints['offers-export-v2'] . '/' . $fileName, 'GET'); 
+            $csv = Reader::createFromString($csv);
+            $headers = $csv->fetchOne();
+            $array = [];
+            foreach ($csv->setOffset(1)->fetchAll() as $row) {
+                $tmp = array_combine($headers, $row);
+                $tmp['Stock'] = (int) $tmp['Stock'];
+                $tmp['Price'] = (float) $tmp['Price'];
+                $tmp['Publish'] = $tmp['Publish'] === 'TRUE' ? true : false;
+                $tmp['Published'] = $tmp['Published'] === 'TRUE' ? true : false;
+                $array[] = new \MCS\BolPlazaOffer($tmp, true);    
+            }
+            return $array;
+        } catch (BolPlazaClientHttpException $e) {
+            $code = $e->getErrorCode();
+            if (in_array($code, ['41300', '41301'])) {
+                throw new BolPlazaClientHttpException(str_replace('%s', $fileName, $e->getMessage()));    
+            }
+        }
     }
     
     /**
