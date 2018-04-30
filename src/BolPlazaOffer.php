@@ -56,9 +56,11 @@ class BolPlazaOffer {
     
     private function format($export)
     {
+        /**
         if (strlen($this->EAN) != 13) {
             throw new BolPlazaOfferException('EAN should be 13 characters long');           
         }
+        */
        
         $Conditions = [
             'NEW', 'AS_NEW', 'GOOD', 'REASONABLE', 'MODERATE'
