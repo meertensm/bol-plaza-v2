@@ -23,9 +23,15 @@ class BolPlazaOffer {
     public function __construct($array = [], $export = false)
     {
         if (isset($array['Status'])) {
-            $array['Published'] = $array['Status']['Published'];
-            $array['ReasonCode'] = $array['Status']['ErrorCode'];
-            $array['ReasonMessage'] = $array['Status']['ErrorMessage'];
+            if (isset($array['Status']['Published'])) {
+                $array['Published'] = $array['Status']['Published'];
+            }
+            if (isset($array['Status']['ErrorCode'])) {
+                $array['ReasonCode'] = $array['Status']['ErrorCode'];
+            }
+            if (isset($array['Status']['ErrorMessage'])) {
+                $array['ReasonMessage'] = $array['Status']['ErrorMessage'];
+            }
             unset($array['Status']);
         }
         
