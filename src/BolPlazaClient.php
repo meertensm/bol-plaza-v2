@@ -169,6 +169,7 @@ class BolPlazaClient{
         $info = curl_getinfo($ch);
 
         if (strpos($info['content_type'], 'xml') !== false) {
+            
             $result = simplexml_load_string(strtr($result, [
                 'bns:1' => '',
                 'bns:' => '',
@@ -286,7 +287,7 @@ class BolPlazaClient{
         
         $fields = [
             'EAN', 'Condition', 'Price', 'DeliveryCode', 'QuantityInStock',
-            'Publish', 'ReferenceCode', 'Description', 'Title', 'FulfillmentMethod'
+            'ReferenceCode', 'Description', 'Title', 'FulfillmentMethod'
         ];
        
         foreach ($offers as $offer) {
@@ -297,8 +298,12 @@ class BolPlazaClient{
             foreach ($fields as $field) {
                 $offer_body->appendChild(
                     $xml->createElement($field, $offer->{$field})
-                );        
+                );    
             }
+            
+            $offer_body->appendChild(
+                $xml->createElement('Publish', $offer->Publish == '' ? '0' : '1')
+            ); 
         }
         
         $result = $this->request(
