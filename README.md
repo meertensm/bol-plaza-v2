@@ -1,7 +1,7 @@
 # Bol.com Plaza Api V2
 [![Latest Stable Version](https://poser.pugx.org/mcs/bol-plaza-v2/v/stable)](https://packagist.org/packages/mcs/bol-plaza-v2) [![Latest Unstable Version](https://poser.pugx.org/mcs/bol-plaza-v2/v/unstable)](https://packagist.org/packages/mcs/bol-plaza-v2) [![License](https://poser.pugx.org/mcs/bol-plaza-v2/license)](https://packagist.org/packages/mcs/bol-plaza-v2) [![Total Downloads](https://poser.pugx.org/mcs/bol-plaza-v2/downloads)](https://packagist.org/packages/mcs/bol-plaza-v2)
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FQG5EWN987PJW)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FQG5EWN987PJW&lc=US)
 
 Installation:
 ```bash

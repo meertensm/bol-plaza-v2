@@ -21,10 +21,12 @@ class BolPlazaReturn{
         foreach ($array as $property => $value) {
             if (property_exists($this, $property)) {
                 if ($property == 'CustomerDetails') {
-                    $value['Firstname'] = $value['FirstName'];
-                    unset($value['FirstName']);
-                    if (is_array($value['Email'])) {
-                        unset($value['Email']);
+                    if (isset($value['Firstname'])) {
+                        $value['Firstname'] = $value['FirstName'];
+                        unset($value['FirstName']);
+                        if (is_array($value['Email'])) {
+                            unset($value['Email']);
+                        }
                     }
                     $this->CustomerDetails = new BolPlazaOrderAddress($value);
                 } else {
