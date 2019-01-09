@@ -41,6 +41,7 @@ class BolPlazaClient{
         
         'offers-export-v2' => '/offers/v2/export',
         'get-single-offer' => '/offers/v2/',
+        'delete-offer' => '/offers/v2/',
         'upsert-offer' => '/offers/v2/',
     ];
     
@@ -265,6 +266,42 @@ class BolPlazaClient{
         if (isset($result['RetailerOffers']['RetailerOffer']['EAN'])) {
             return new \MCS\BolPlazaOffer($result['RetailerOffers']['RetailerOffer'], true);    
         }
+        
+        return $result;
+    }
+    
+    public function deleteOfferV2($ean, $condition = 'NEW')
+    {
+        /**
+        <DeleteBulkRequest xmlns="">
+ <RetailerOfferIdentifier>
+  <EAN>8715704021177</EAN>
+  <Condition>NEW</Condition>
+ </RetailerOfferIdentifier>
+</DeleteBulkRequest>
+*/
+        
+        $xml = new DOMDocument('1.0', 'UTF-8');
+
+        $body = $xml->appendChild(
+            $xml->createElementNS('https://plazaapi.bol.com/offers/xsd/api-2.0.xsd', 'DeleteBulkRequest')
+        );
+        
+        $offer_body = $body->appendChild(
+            $xml->createElement('RetailerOfferIdentifier')
+        );    
+
+        $offer_body->appendChild(
+            $xml->createElement('EAN', $ean)
+        );
+        
+        $offer_body->appendChild(
+            $xml->createElement('Condition', $condition)
+        ); 
+
+        $result = $this->request(
+            $this->endPoints['upsert-offer'], 'DELETE', $xml->saveXML()
+        );
         
         return $result;
     }
